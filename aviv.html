@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="he">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>משחק חישוב מתמטי</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f0f0f0;
+            text-align: center;
+            padding-top: 20px;
+        }
+
+        .welcome, .question {
+            font-size: 30px;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 20px;
+        }
+
+        .options {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        button {
+            font-size: 22px;
+            padding: 15px 30px;
+            border-radius: 10px;
+            border: none;
+            background-color: #4CAF50;
+            color: white;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        button:hover {
+            background-color: #45a049;
+        }
+
+        button:active {
+            transform: scale(0.98);
+        }
+
+        .score {
+            font-size: 24px;
+            margin-bottom: 20px;
+            color: #555;
+        }
+
+        #gameBoard {
+            position: relative;
+            width: 700px;
+            height: 100px;
+            border: 4px solid #333;
+            border-radius: 50px;
+            margin: 30px auto;
+            background: linear-gradient(90deg, #e0f7fa 50%, #ffe0b2 50%);
+        }
+
+        .character {
+            position: absolute;
+            left: 0;
+            width: 70px;
+            height: 70px;
+            background-color: #ffeb3b;
+            border-radius: 50%;
+            text-align: center;
+            line-height: 70px;
+            font-size: 40px;
+            font-weight: bold;
+        }
+
+        #finishLine {
+            position: absolute;
+            right: 0;
+            width: 30px;
+            height: 100%;
+            background-color: red;
+            border-radius: 0 50px 50px 0;
+        }
+
+        .smiley {
+            font-size: 50px;
+            color: yellow;
+        }
+
+        #smileyContainer {
+            margin-top: 20px;
+        }
+
+        .mistakes {
+            margin-top: 20px;
+            font-size: 18px;
+            color: #ff1744;
+        }
+
+        #result {
+            font-size: 22px;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 20px;
+        }
+
+        /* Animations */
+        .character.animate {
+            transition: left 0.5s ease;
+        }
+
+        .smiley.bounce {
+            animation: bounce 0.8s infinite;
+        }
+
+        @keyframes bounce {
+            0%, 100% {
+                transform: translateY(0);
+            }
+            50% {
+                transform: translateY(-10px);
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="welcome" id="welcome">ברוך הבא, <span id="playerName"></span>!</div>
+    <div class="question" id="question">טוען...</div>
+    <div class="options">
+        <button onclick="checkAnswer(0)" id="option1">אפשרות 1</button>
+        <button onclick="checkAnswer(1)" id="option2">אפשרות 2</button>
+        <button onclick="checkAnswer(2)" id="option3">אפשרות 3</button>
+        <button onclick="checkAnswer(3)" id="option4">אפשרות 4</button>
+    </div>
+    <div id="result"></div>
+    <div class="score">נכון: <span id="correctScore">0</span> | לא נכון: <span id="wrongScore">0</span></div>
+
+    <!-- Game board -->
+    <div id="gameBoard">
+        <div class="character" id="character">😊</div>
+        <div id="finishLine"></div>
+    </div>
+
+    <div id="smileyContainer"></div>
+
+    <div class="mistakes" id="mistakesSummary" style="display: none;"></div>
+
+    <script>
+        let playerName = "";
+        let correctScore = 0;
+        let wrongScore = 0;
+        let position = 0; // Start position of character (0 - beginning, 100 - finish)
+        const totalSteps = 30; // Steps to finish line
+        const mistakes = [];
+
+        function getPlayerName() {
+            playerName = prompt("אנא הזן את שמך:");
+            document.getElementById("playerName").innerText = playerName;
+            loadQuestion();
+        }
+
+        function generateQuestion() {
+            const operation = Math.random() < 0.5 ? 'addition' : 'subtraction';
+            let num1 = Math.floor(Math.random() * 21);
+            let num2 = Math.floor(Math.random() * 21);
+            let correctAnswer;
+
+            if (operation === 'addition') {
+                correctAnswer = num1 + num2;
+                return {
+                    question: `${num1} + ${num2} = ?`,
+                    correct: correctAnswer
+                };
+            } else {
+                if (num1 < num2) {
+                    [num1, num2] = [num2, num1]; // Swap if num1 < num2
+                }
+                correctAnswer = num1 - num2;
+                return {
+                    question: `${num1} - ${num2} = ?`,
+                    correct: correctAnswer
+                };
+            }
+        }
+
+        function generateOptions(correctAnswer) {
+            const options = new Set();
+            options.add(correctAnswer);
+            while (options.size < 4) {
+                const randomOption = Math.floor(Math.random() * 41); // Random options from 0 to 40
+                options.add(randomOption);
+            }
+            return Array.from(options).sort(() => Math.random() - 0.5); // Shuffle options
+        }
+
+        function loadQuestion() {
+            const { question, correct } = generateQuestion();
+            const options = generateOptions(correct);
+
+            document.getElementById("question").innerText = question;
+            options.forEach((option, index) => {
+                document.getElementById(`option${index + 1}`).innerText = option;
+                document.getElementById(`option${index + 1}`).setAttribute("data-correct", option === correct);
+            });
+
+            document.getElementById("result").innerText = "";
+        }
+
+        function checkAnswer(selectedOption) {
+            const correct = document.getElementById(`option${selectedOption + 1}`).getAttribute("data-correct") === "true";
+
+            if (correct) {
+                document.getElementById("result").innerText = "נכון!";
+                correctScore++;
+                moveCharacter(1); // Move forward
+                showSmiley();
+            } else {
+                document.getElementById("result").innerText = "לא נכון. נסה שוב!";
+                wrongScore++;
+                const questionText = document.getElementById("question").innerText;
+                mistakes.push(questionText);
+                moveCharacter(-1); // Move backward
+            }
+
+            document.getElementById("correctScore").innerText = correctScore;
+            document.getElementById("wrongScore").innerText = wrongScore;
+
+            if (correctScore < totalSteps) {
+                setTimeout(nextQuestion, 1000);
+            } else {
+                document.getElementById("result").innerText = "כל הכבוד, " + playerName + "! הגעת לקו הסיום!";
+            }
+        }
+
+        function moveCharacter(step) {
+            const gameBoard = document.getElementById("gameBoard");
+            const character = document.getElementById("character");
+
+            position += step;
+            if (position < 0) position = 0;
+            if (position > totalSteps) position = totalSteps;
+
+            const percentage = (position / totalSteps) * 100;
+            character.style.left = `calc(${percentage}% - 35px)`; // Adjust left position
+            character.classList.add("animate"); // Apply animation
+        }
+
+        function showSmiley() {
+            const smileyContainer = document.getElementById("smileyContainer");
+            smileyContainer.innerHTML = '<div class="smiley bounce">😊</div>';
+            setTimeout(() => smileyContainer.innerHTML = '', 1000); // Remove smiley after 1 second
+        }
+
+        function nextQuestion() {
+            loadQuestion();
+        }
+
+        window.onload = getPlayerName;
+    </script>
+
+</body>
+</html>
