@@ -4,6 +4,8 @@ body {
     direction: rtl;
     text-align: center;
     color: #333;
+    direction: rtl; /* Ensures that the layout is right-to-left */
+    text-align: center; /* Keeps text centered as needed */
 }
 
 .container {
@@ -20,6 +22,7 @@ h1 {
 .question, .progress {
     font-size: 24px;
     margin: 20px 0;
+    direction: rtl; /* Ensures math problems display in RTL format */
 }
 
 .answers button {
@@ -46,12 +49,4 @@ h1 {
 .firework {
     color: #ffcc00;
     font-size: 40px;
-}
-body {
-    direction: rtl; /* Ensures that the layout is right-to-left */
-    text-align: center; /* Keeps text centered as needed */
-}
-
-.question {
-    direction: rtl; /* Ensures math problems display in RTL format */
 }
