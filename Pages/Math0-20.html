@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="he">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>משחק חשבון - חיבור וחיסור עד 20</title>
+<link rel="stylesheet" href="../CSS/styles.css"> <!-- Reference to external CSS -->
+</head>
+<body>
+
+<div class="container">
+    <h1>משחק חשבון - חיבור וחיסור עד 20</h1>
+
+    <!-- Cartoon Character -->
+    <div class="character">
+        <img id="character" src="https://example.com/kid-character.png" alt="דמות משחק" />
+    </div>
+
+    <!-- Display the math question -->
+    <div id="question" class="question">הכנה...</div>
+
+    <!-- Answer buttons -->
+    <div class="answers">
+        <button onclick="checkAnswer(1)" id="answer1">תשובה 1</button>
+        <button onclick="checkAnswer(2)" id="answer2">תשובה 2</button>
+        <button onclick="checkAnswer(3)" id="answer3">תשובה 3</button>
+        <button onclick="checkAnswer(4)" id="answer4">תשובה 4</button>
+    </div>
+
+    <!-- Display result and progress -->
+    <div id="result"></div>
+    <div class="progress" id="progress">ציון: 0 מתוך 30</div>
+</div>
+
+<script>
+    let score = 0;
+    let correctAnswer = 0;
+    let steps = 0;
+
+    // Generate random math questions
+    function generateQuestion() {
+        const num1 = Math.floor(Math.random() * 20) + 1;
+        const num2 = Math.floor(Math.random() * 20) + 1;
+        const operator = Math.random() > 0.5 ? '+' : '-';
+        correctAnswer = operator === '+' ? num1 + num2 : num1 - num2;
+
+        // Display the question
+        document.getElementById('question').textContent = `${num1} ${operator} ${num2} = ?`;
+
+        // Generate random answers and place correct one randomly
+        const correctIndex = Math.floor(Math.random() * 4) + 1;
+        document.getElementById(`answer${correctIndex}`).textContent = correctAnswer;
+
+        // Fill other buttons with random answers
+        for (let i = 1; i <= 4; i++) {
+            if (i !== correctIndex) {
+                document.getElementById(`answer${i}`).textContent = Math.floor(Math.random() * 40) - 10;
+            }
+        }
+    }
+
+    // Check if the clicked answer is correct
+    function checkAnswer(selectedAnswer) {
+        const answerText = document.getElementById(`answer${selectedAnswer}`).textContent;
+        if (parseInt(answerText) === correctAnswer) {
+            score++;
+            steps++;
+            moveCharacter();
+            document.getElementById('result').innerHTML = '<span class="firework">✔</span> תשובה נכונה!';
+        } else {
+            steps--;
+            document.getElementById('result').textContent = '✘ תשובה שגויה!';
+        }
+
+        // Update score progress
+        document.getElementById('progress').textContent = `ציון: ${score} מתוך 30`;
+
+        // Check if the player reached the finish line
+        if (steps >= 30) {
+            document.getElementById('result').textContent = '🎉 סיימת את המשחק! כל הכבוד!';
+            disableButtons();
+        } else {
+            setTimeout(generateQuestion, 1000); // Move to next question after delay
+        }
+    }
+
+    // Disable answer buttons after completion
+    function disableButtons() {
+        for (let i = 1; i <= 4; i++) {
+            document.getElementById(`answer${i}`).disabled = true;
+        }
+    }
+
+    // Move the character forward or backward based on correct/incorrect answers
+    function moveCharacter() {
+        const character = document.getElementById('character');
+        const currentPosition = steps * 20; // Each step moves the character
+        character.style.transform = `translateX(${currentPosition}px)`;
+    }
+
+    // Initialize the first question
+    generateQuestion();
+</script>
+
+</body>
+</html>
