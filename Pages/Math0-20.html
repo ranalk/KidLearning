@@ -37,24 +37,36 @@
     let correctAnswer = 0;
     let steps = 0;
 
-    // Generate random math questions
+    // Generate random math questions (only positive answers for subtraction)
     function generateQuestion() {
-        const num1 = Math.floor(Math.random() * 20) + 1;
-        const num2 = Math.floor(Math.random() * 20) + 1;
-        const operator = Math.random() > 0.5 ? '+' : '-';
+        const num1 = Math.floor(Math.random() * 20) + 1;  // Random number between 1 and 20
+        const num2 = Math.floor(Math.random() * 20) + 1;  // Random number between 1 and 20
+        let operator = Math.random() > 0.5 ? '+' : '-';
+        
+        // Ensure subtraction results in positive values only
+        if (operator === '-' && num1 < num2) {
+            // Swap numbers if num1 is smaller to avoid negative results
+            [num1, num2] = [num2, num1];
+        }
+        
+        // Calculate the correct answer
         correctAnswer = operator === '+' ? num1 + num2 : num1 - num2;
 
-        // Display the question
+        // Display the question correctly for RTL
         document.getElementById('question').textContent = `${num1} ${operator} ${num2} = ?`;
 
-        // Generate random answers and place correct one randomly
+        // Place the correct answer randomly in one of the 4 buttons
         const correctIndex = Math.floor(Math.random() * 4) + 1;
         document.getElementById(`answer${correctIndex}`).textContent = correctAnswer;
 
-        // Fill other buttons with random answers
+        // Fill other buttons with random plausible answers (without negative values)
         for (let i = 1; i <= 4; i++) {
             if (i !== correctIndex) {
-                document.getElementById(`answer${i}`).textContent = Math.floor(Math.random() * 40) - 10;
+                let randomAnswer;
+                do {
+                    randomAnswer = Math.floor(Math.random() * 40); // Random number between 0 and 39
+                } while (randomAnswer === correctAnswer); // Ensure no duplicate of correct answer
+                document.getElementById(`answer${i}`).textContent = randomAnswer;
             }
         }
     }
@@ -101,6 +113,7 @@
     // Initialize the first question
     generateQuestion();
 </script>
+
 
 </body>
 </html>
