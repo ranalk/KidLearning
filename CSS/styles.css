@@ -47,3 +47,11 @@ h1 {
     color: #ffcc00;
     font-size: 40px;
 }
+body {
+    direction: rtl; /* Ensures that the layout is right-to-left */
+    text-align: center; /* Keeps text centered as needed */
+}
+
+.question {
+    direction: rtl; /* Ensures math problems display in RTL format */
+}
