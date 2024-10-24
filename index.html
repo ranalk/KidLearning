@@ -3,262 +3,142 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>משחק חישוב מתמטי</title>
+    <title>ברוכים הבאים למשחקי הלמידה</title>
     <style>
         body {
+            background-color: #f0f8ff;
             font-family: 'Arial', sans-serif;
-            background-color: #f0f0f0;
+            direction: rtl; /* Right to left for Hebrew */
             text-align: center;
-            padding-top: 20px;
-        }
-
-        .welcome, .question {
-            font-size: 30px;
-            font-weight: bold;
             color: #333;
-            margin-bottom: 20px;
         }
 
-        .options {
-            display: flex;
-            justify-content: center;
-            gap: 20px;
-            margin-bottom: 20px;
+        .container {
+            padding: 20px;
+            margin: 0 auto;
+        }
+
+        .welcome {
+            font-size: 24px;
+            margin-top: 20px;
+        }
+
+        input[type="text"] {
+            padding: 10px;
+            font-size: 18px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            width: 70%;
         }
 
         button {
-            font-size: 22px;
-            padding: 15px 30px;
-            border-radius: 10px;
+            padding: 12px 20px;
+            background-color: #ffcc00;
+            color: #fff;
             border: none;
-            background-color: #4CAF50;
-            color: white;
+            border-radius: 12px;
+            font-size: 18px;
             cursor: pointer;
-            transition: background-color 0.3s ease;
         }
 
         button:hover {
-            background-color: #45a049;
+            background-color: #ffa500;
         }
 
-        button:active {
-            transform: scale(0.98);
+        .menu {
+            margin-top: 30px;
         }
 
-        .score {
-            font-size: 24px;
-            margin-bottom: 20px;
-            color: #555;
+        .menu ul {
+            list-style-type: none;
+            padding: 0;
         }
 
-        #gameBoard {
-            position: relative;
-            width: 700px;
-            height: 100px;
-            border: 4px solid #333;
-            border-radius: 50px;
-            margin: 30px auto;
-            background: linear-gradient(90deg, #e0f7fa 50%, #ffe0b2 50%);
+        .menu li {
+            margin: 15px 0;
         }
 
-        .character {
-            position: absolute;
-            left: 0;
-            width: 70px;
-            height: 70px;
-            background-color: #ffeb3b;
-            border-radius: 50%;
-            text-align: center;
-            line-height: 70px;
-            font-size: 40px;
-            font-weight: bold;
-        }
-
-        #finishLine {
-            position: absolute;
-            right: 0;
-            width: 30px;
-            height: 100%;
-            background-color: red;
-            border-radius: 0 50px 50px 0;
-        }
-
-        .smiley {
-            font-size: 50px;
-            color: yellow;
-        }
-
-        #smileyContainer {
-            margin-top: 20px;
-        }
-
-        .mistakes {
-            margin-top: 20px;
-            font-size: 18px;
-            color: #ff1744;
-        }
-
-        #result {
+        .menu a {
+            display: inline-block;
+            text-decoration: none;
             font-size: 22px;
-            font-weight: bold;
-            color: #333;
-            margin-bottom: 20px;
+            color: #4CAF50;
+            background-color: #ff9966;
+            padding: 12px 20px;
+            border-radius: 12px;
         }
 
-        /* Animations */
-        .character.animate {
-            transition: left 0.5s ease;
+        .menu a:hover {
+            background-color: #ff7733;
         }
 
-        .smiley.bounce {
-            animation: bounce 0.8s infinite;
+        /* Cartoon character styles for a fun look */
+        .character {
+            margin: 20px auto;
         }
 
-        @keyframes bounce {
-            0%, 100% {
-                transform: translateY(0);
-            }
-            50% {
-                transform: translateY(-10px);
-            }
+        .character img {
+            width: 150px;
+            height: auto;
         }
     </style>
 </head>
 <body>
 
-    <div class="welcome" id="welcome">ברוך הבא, <span id="playerName"></span>!</div>
-    <div class="question" id="question">טוען...</div>
-    <div class="options">
-        <button onclick="checkAnswer(0)" id="option1">אפשרות 1</button>
-        <button onclick="checkAnswer(1)" id="option2">אפשרות 2</button>
-        <button onclick="checkAnswer(2)" id="option3">אפשרות 3</button>
-        <button onclick="checkAnswer(3)" id="option4">אפשרות 4</button>
-    </div>
-    <div id="result"></div>
-    <div class="score">נכון: <span id="correctScore">0</span> | לא נכון: <span id="wrongScore">0</span></div>
-
-    <!-- Game board -->
-    <div id="gameBoard">
-        <div class="character" id="character">😊</div>
-        <div id="finishLine"></div>
+<div class="container">
+    <h1>ברוכים הבאים למשחקי הלמידה</h1>
+    <div class="character">
+        <!-- Placeholder for kid-friendly cartoon character -->
+        <img src="https://example.com/cartoon-character.png" alt="דמות חמודה" />
     </div>
 
-    <div id="smileyContainer"></div>
+    <p class="welcome" id="welcomeMessage">הזן את שמך כדי להתחיל!</p>
 
-    <div class="mistakes" id="mistakesSummary" style="display: none;"></div>
+    <input type="text" id="nameInput" placeholder="הכנס שם כאן" />
+    <br><br>
+    <button onclick="saveName()">שמור שם</button>
 
-    <script>
-        let playerName = "";
-        let correctScore = 0;
-        let wrongScore = 0;
-        let position = 0; // Start position of character (0 - beginning, 100 - finish)
-        const totalSteps = 30; // Steps to finish line
-        const mistakes = [];
+    <div class="menu">
+        <h2>תפריט משחקים</h2>
+        <ul>
+            <li><a href="Pages/Math0-20.html">משחק חשבון (חיבור וחיסור עד 20)</a></li>
+            <!-- Add more game links here -->
+        </ul>
+    </div>
+</div>
 
-        function getPlayerName() {
-            playerName = prompt("אנא הזן את שמך:");
-            document.getElementById("playerName").innerText = playerName;
-            loadQuestion();
+<script>
+    // Function to save the name in cookies
+    function saveName() {
+        var name = document.getElementById('nameInput').value;
+        if (name) {
+            document.cookie = "playerName=" + name + "; path=/; expires=Fri, 31 Dec 9999 23:59:59 GMT";
+            document.getElementById('welcomeMessage').innerHTML = 'שלום, ' + name + '! ברוך הבא למשחקי הלמידה!';
+            document.getElementById('nameInput').style.display = 'none';
         }
+    }
 
-        function generateQuestion() {
-            const operation = Math.random() < 0.5 ? 'addition' : 'subtraction';
-            let num1 = Math.floor(Math.random() * 21);
-            let num2 = Math.floor(Math.random() * 21);
-            let correctAnswer;
-
-            if (operation === 'addition') {
-                correctAnswer = num1 + num2;
-                return {
-                    question: `${num1} + ${num2} = ?`,
-                    correct: correctAnswer
-                };
-            } else {
-                if (num1 < num2) {
-                    [num1, num2] = [num2, num1]; // Swap if num1 < num2
-                }
-                correctAnswer = num1 - num2;
-                return {
-                    question: `${num1} - ${num2} = ?`,
-                    correct: correctAnswer
-                };
-            }
+    // Function to load the name from cookies
+    function getCookie(name) {
+        var nameEQ = name + "=";
+        var ca = document.cookie.split(';');
+        for(var i=0; i < ca.length; i++) {
+            var c = ca[i];
+            while (c.charAt(0) == ' ') c = c.substring(1,c.length);
+            if (c.indexOf(nameEQ) == 0) return c.substring(nameEQ.length,c.length);
         }
+        return null;
+    }
 
-        function generateOptions(correctAnswer) {
-            const options = new Set();
-            options.add(correctAnswer);
-            while (options.size < 4) {
-                const randomOption = Math.floor(Math.random() * 41); // Random options from 0 to 40
-                options.add(randomOption);
-            }
-            return Array.from(options).sort(() => Math.random() - 0.5); // Shuffle options
+    // On page load, check if the name is already stored
+    window.onload = function() {
+        var playerName = getCookie("playerName");
+        if (playerName) {
+            document.getElementById('welcomeMessage').innerHTML = 'שלום, ' + playerName + '! ברוך הבא למשחקי הלמידה!';
+            document.getElementById('nameInput').style.display = 'none';
         }
-
-        function loadQuestion() {
-            const { question, correct } = generateQuestion();
-            const options = generateOptions(correct);
-
-            document.getElementById("question").innerText = question;
-            options.forEach((option, index) => {
-                document.getElementById(`option${index + 1}`).innerText = option;
-                document.getElementById(`option${index + 1}`).setAttribute("data-correct", option === correct);
-            });
-
-            document.getElementById("result").innerText = "";
-        }
-
-        function checkAnswer(selectedOption) {
-            const correct = document.getElementById(`option${selectedOption + 1}`).getAttribute("data-correct") === "true";
-
-            if (correct) {
-                document.getElementById("result").innerText = "נכון!";
-                correctScore++;
-                moveCharacter(1); // Move forward
-                showSmiley();
-            } else {
-                document.getElementById("result").innerText = "לא נכון. נסה שוב!";
-                wrongScore++;
-                const questionText = document.getElementById("question").innerText;
-                mistakes.push(questionText);
-                moveCharacter(-1); // Move backward
-            }
-
-            document.getElementById("correctScore").innerText = correctScore;
-            document.getElementById("wrongScore").innerText = wrongScore;
-
-            if (correctScore < totalSteps) {
-                setTimeout(nextQuestion, 1000);
-            } else {
-                document.getElementById("result").innerText = "כל הכבוד, " + playerName + "! הגעת לקו הסיום!";
-            }
-        }
-
-        function moveCharacter(step) {
-            const gameBoard = document.getElementById("gameBoard");
-            const character = document.getElementById("character");
-
-            position += step;
-            if (position < 0) position = 0;
-            if (position > totalSteps) position = totalSteps;
-
-            const percentage = (position / totalSteps) * 100;
-            character.style.left = `calc(${percentage}% - 35px)`; // Adjust left position
-            character.classList.add("animate"); // Apply animation
-        }
-
-        function showSmiley() {
-            const smileyContainer = document.getElementById("smileyContainer");
-            smileyContainer.innerHTML = '<div class="smiley bounce">😊</div>';
-            setTimeout(() => smileyContainer.innerHTML = '', 1000); // Remove smiley after 1 second
-        }
-
-        function nextQuestion() {
-            loadQuestion();
-        }
-
-        window.onload = getPlayerName;
-    </script>
+    };
+</script>
 
 </body>
 </html>
